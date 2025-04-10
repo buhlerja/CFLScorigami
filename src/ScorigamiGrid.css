@@ -1,0 +1,65 @@
+/* Center the content within the main container */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;  /* Make it take full viewport height */
+    padding: 20px;
+    text-align: center;  /* Center the title text */
+}
+
+/* Container for the grid */
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Style the grid header and grid items */
+.grid-header,
+.grid-body {
+    display: grid;
+    text-align: center;
+    font-size: 10px;
+}
+
+.grid-header {
+    margin-bottom: 10px;
+}
+
+.grid-cell {
+    padding: 8px;
+    font-size: 10px;
+}
+
+.grid-item {
+    background-color: white; /* Default background color */
+    border: 1px solid #ccc; /* Optional: Add borders to grid cells */
+    width: 20px;
+    height: 20px;
+}
+
+.grid-item.active {
+    background-color: green; /* Green background for active cells */
+    border: 1px solid #ccc; /* Optional: Add borders to grid cells */
+    width: 20px;
+    height: 20px;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.grid-item:hover {
+    background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+.grid-item.hidden {
+    visibility: hidden;  /* Hides the cell but keeps the space in the grid */
+}
+  
+
+.grid-item.active:hover {
+    background-color: darkgreen; /* Darker green for active cells on hover */
+}
