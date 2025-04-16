@@ -3,11 +3,29 @@ import ScorigamiGrid from './Scorigami';
 import './App.css';
 import * as XLSX from 'xlsx'; // Import the XLSX library
 
-// THE SCORIGAMI GRID NEEDS TO START FROM 0 NOT 1
+function groupGameDataByScore(gameData) {
+  const groupedData = {};
+
+  gameData.forEach(row => {
+    const [winningTeam, losingTeam, winningScore, losingScore, homeTeam, date, week, year] = row;
+
+    const key = `${winningScore}-${losingScore}`;
+
+    if (!groupedData[key]) {
+      groupedData[key] = [];
+    }
+
+    groupedData[key].push([winningTeam, losingTeam, homeTeam, date, week, year]);
+  });
+
+  return groupedData;
+}
+
 function App() {
   const [showFrequency, setShowFrequency] = useState(false); // State to toggle between grid and frequency view
-  const [showNumbersFreq, setShowNumbersFreq] = useState([]) // State to toggle between showing frequency numbers on boxes
+  const [showNumbersFreq, setShowNumbersFreq] = useState(false) // State to toggle between showing frequency numbers on boxes
   const [scoreFrequencies, setScoreFrequencies] = useState([]) // Used to store score frequency data
+  const [allGameData, setAllGameData] = useState([]); // Used to score the metadata around each individual score
   const [existingScores, setExistingScores] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
 
@@ -47,15 +65,19 @@ function App() {
 
         // Convert raw data into an array of tuples (winning team, losing team)
         const parsedData = rawData.map(row => [row["Winning Score"], row["Losing Score"]]);
+        const parsedData_forAllGameData = rawData.map(row => [row["Winning Team"], row["Losing Team"], row["Winning Score"], row["Losing Score"], row["Home Team"], row["Date"], row["Week"], row["Year"]]);
         //console.log('Parsed data:', parsedData); // Log the parsed data
         const parsedDataTwo = rawDataTwo.map(row => [row["Winning Score"], row["Losing Score"], row["Frequency"]]);
         console.log('Parsed data:', parsedDataTwo); // Log the parsed data (two)
 
         // Set the parsed data to the state
         setExistingScores(parsedData);
+        const groupedByScore = groupGameDataByScore(parsedData_forAllGameData);
+        setAllGameData(groupedByScore);
+        setScoreFrequencies(parsedDataTwo); 
         setLoading(false); // Set loading to false after data is fetched
         // Set the parse data to the state
-        setScoreFrequencies(parsedDataTwo); // Works after a time.
+        
       })
       .catch((error) => {
         console.error("Error fetching or parsing Excel file:", error);
@@ -89,7 +111,13 @@ function App() {
         <p>Loading data...</p> // Show loading message while fetching
       ) : (
         <>
-          <ScorigamiGrid existing_scores={existingScores} score_frequencies={scoreFrequencies} show_frequency={showFrequency} show_numbers_freq={showNumbersFreq}/> {/* Pass the data to ScorigamiGrid */}
+          <ScorigamiGrid 
+          existing_scores={existingScores}
+          score_frequencies={scoreFrequencies} 
+          show_frequency={showFrequency} 
+          show_numbers_freq={showNumbersFreq}
+          all_game_data={allGameData}
+          /> {/* Pass the data to ScorigamiGrid */}
         </>
       )}
     </div>

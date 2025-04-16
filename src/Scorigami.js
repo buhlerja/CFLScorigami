@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ScoreView from "./ScoreView";
 import './ScorigamiGrid.css';  // Import your custom CSS file
 
 const dim_x = 88; // To account for starting from zero
@@ -10,14 +11,23 @@ export default function ScorigamiGrid({
   existing_scores = [], 
   score_frequencies = [], 
   show_frequency = false,
-  show_numbers_freq = false
+  show_numbers_freq = false,
+  all_game_data = []
 }) {
   useEffect(() => {
     console.log('Existing scores (first 5):', existing_scores.slice(0, 5));
+    console.log('Grouped GAME DATA', all_game_data["30-20"]); // array of objects with team + date info
     console.log('Score frequencies (first 5):', score_frequencies.slice(0, 5));
     console.log('Sample frequency check for (10,7):', 
       score_frequencies.find(([x,y]) => x === 10 && y === 7));
-  }, [existing_scores, score_frequencies]);
+  }, [existing_scores, score_frequencies, all_game_data]);
+
+  // VARIABLE DECLARATIONS
+  const [selectedScore, setSelectedScore] = useState(null);
+
+  const handleClick = (scoreKey) => {
+    setSelectedScore(scoreKey); // like "30-20"
+  };
 
   const isActive = (x, y) => {
     return existing_scores.some(([ex, ey]) => ex === x && ey === y);
@@ -106,6 +116,7 @@ export default function ScorigamiGrid({
                           key={`cell-${x}-${y}`}
                           className={`grid-item ${isActive(x, y) ? "active" : ""}`}
                           title={`Score: (${x}, ${y})`}
+                          onClick={() => handleClick(`${x}-${y}`)}
                         >
                           {show_numbers_freq && (
                             <div className="grid-cell text-center">{getFrequency(x, y)}</div>
@@ -139,6 +150,14 @@ export default function ScorigamiGrid({
                 })}
               </React.Fragment>
             ))}
+            {/* Conditionally render the ScoreView modal */}
+            {selectedScore && (
+              <ScoreView
+                scoreKey={selectedScore}
+                data={all_game_data[selectedScore]} // Make sure your data is structured like this
+                onClose={() => setSelectedScore(null)}
+              />
+            )}
           </div>
         </div>
       </div>
