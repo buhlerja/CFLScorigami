@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ScoreView from "./ScoreView";
-import './ScorigamiGrid.css';  // Import your custom CSS file
+import './ScorigamiGrid.css';  
 
 const dim_x = 88; // To account for starting from zero
 const dim_y = 55;
