@@ -14,12 +14,12 @@ export default function ScorigamiGrid({
   show_numbers_freq = false,
   all_game_data = []
 }) {
-  useEffect(() => {
+  /*useEffect(() => {
     console.log('Existing scores (first 5):', existing_scores.slice(0, 5));
     console.log('Grouped GAME DATA', all_game_data["30-20"]);
     console.log('Score frequencies (sample):', Object.entries(score_frequencies).slice(0, 5));
     console.log('Sample frequency check for (10,7):', score_frequencies["10-7"]);
-  }, [existing_scores, score_frequencies, all_game_data]);
+  }, [existing_scores, score_frequencies, all_game_data]);*/
   
   // VARIABLE DECLARATIONS
   const [selectedScore, setSelectedScore] = useState(null);
@@ -29,8 +29,8 @@ export default function ScorigamiGrid({
   };
 
   const isActive = (x, y) => {
-    return existing_scores.some(([ex, ey]) => ex === x && ey === y);
-  };
+    return existing_scores.some(([ex, ey]) => Number(ex) === Number(x) && Number(ey) === Number(y));
+  };  
 
   // Frequency getter with validation
   // Frequency getter for dictionary-based score_frequencies
