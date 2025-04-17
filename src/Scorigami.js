@@ -16,12 +16,11 @@ export default function ScorigamiGrid({
 }) {
   useEffect(() => {
     console.log('Existing scores (first 5):', existing_scores.slice(0, 5));
-    console.log('Grouped GAME DATA', all_game_data["30-20"]); // array of objects with team + date info
-    console.log('Score frequencies (first 5):', score_frequencies.slice(0, 5));
-    console.log('Sample frequency check for (10,7):', 
-      score_frequencies.find(([x,y]) => x === 10 && y === 7));
+    console.log('Grouped GAME DATA', all_game_data["30-20"]);
+    console.log('Score frequencies (sample):', Object.entries(score_frequencies).slice(0, 5));
+    console.log('Sample frequency check for (10,7):', score_frequencies["10-7"]);
   }, [existing_scores, score_frequencies, all_game_data]);
-
+  
   // VARIABLE DECLARATIONS
   const [selectedScore, setSelectedScore] = useState(null);
 
@@ -34,26 +33,24 @@ export default function ScorigamiGrid({
   };
 
   // Frequency getter with validation
+  // Frequency getter for dictionary-based score_frequencies
   const getFrequency = (x, y) => {
-    if (!Array.isArray(score_frequencies)) {
+    if (typeof score_frequencies !== 'object' || score_frequencies === null) {
       console.warn('Frequency data not loaded or invalid');
       return 0;
     }
-    
-    const found = score_frequencies.find(([fx, fy]) => 
-      Number(fx) === Number(x) && Number(fy) === Number(y));
-    
-    if (!found) return 0;
-    
-    // Ensure frequency is a number
-    const freq = Number(found[2]);
-    if (isNaN(freq)) {
-      console.warn(`Invalid frequency value for ${x}-${y}:`, found[2]);
+
+    const key = `${x}-${y}`;
+    const freq = score_frequencies[key];
+
+    if (typeof freq !== 'number') {
+      console.warn(`Invalid or missing frequency value for ${key}:`, freq);
       return 0;
     }
-    
+
     return freq;
   };
+
 
   // Enhanced color scaling
   const getFrequencyColor = (frequency) => {

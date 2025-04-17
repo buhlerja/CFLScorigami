@@ -21,6 +21,23 @@ function groupGameDataByScore(gameData) {
   return groupedData;
 }
 
+function getFrequencyData(gameData) {
+  const frequencyData = {}
+  gameData.forEach(row => {
+    const [winningTeam, losingTeam, winningScore, losingScore, homeTeam, date, week, year] = row;
+
+    const key = `${winningScore}-${losingScore}`;
+
+    if(!frequencyData[key]) {
+      frequencyData[key] = 0
+    }
+
+    frequencyData[key] = frequencyData[key] + 1;
+  });
+
+  return frequencyData;
+}
+
 function App() {
   const [showFrequency, setShowFrequency] = useState(false); // State to toggle between grid and frequency view
   const [showNumbersFreq, setShowNumbersFreq] = useState(false) // State to toggle between showing frequency numbers on boxes
@@ -47,34 +64,19 @@ function App() {
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
 
-        // Get the second frequency sheet from the workbook
-        const sheetNameTwo = workbook.SheetNames[1];
-        const sheetTwo = workbook.Sheets[sheetNameTwo];
-        console.log('Sheet fetched:', sheetTwo); // Log the sheet object
-
         // Convert the sheet to JSON
         const rawData = XLSX.utils.sheet_to_json(sheet);
-        //console.log('Raw data:', rawData); // Log the raw data from the sheet
-        const rawDataTwo = XLSX.utils.sheet_to_json(sheetTwo);
-        console.log('Raw data:', rawDataTwo); // Log the raw data from the sheet
-
-        // Print each row individually to see the structure
-        //rawData.forEach((row, index) => {
-        //  console.log(`Row ${index + 1}:`, row); // Log each row in the sheet
-        //});
 
         // Convert raw data into an array of tuples (winning team, losing team)
         const parsedData = rawData.map(row => [row["Winning Score"], row["Losing Score"]]);
         const parsedData_forAllGameData = rawData.map(row => [row["Winning Team"], row["Losing Team"], row["Winning Score"], row["Losing Score"], row["Home Team"], row["Date"], row["Week"], row["Year"]]);
-        //console.log('Parsed data:', parsedData); // Log the parsed data
-        const parsedDataTwo = rawDataTwo.map(row => [row["Winning Score"], row["Losing Score"], row["Frequency"]]);
-        console.log('Parsed data:', parsedDataTwo); // Log the parsed data (two)
 
         // Set the parsed data to the state
         setExistingScores(parsedData);
         const groupedByScore = groupGameDataByScore(parsedData_forAllGameData);
         setAllGameData(groupedByScore);
-        setScoreFrequencies(parsedDataTwo); 
+        const groupedByFrequency = getFrequencyData(parsedData_forAllGameData);
+        setScoreFrequencies(groupedByFrequency) 
         setLoading(false); // Set loading to false after data is fetched
         // Set the parse data to the state
         
