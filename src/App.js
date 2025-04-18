@@ -134,7 +134,7 @@ function App() {
       </button>
 
       <button className="styled-button" onClick={toggleShowNumbersFreq}>
-        {showNumbersFreq ? "Hide Frequency Numbers" : "Show Frequency Count"}
+        {showNumbersFreq ? "Hide Frequency Count" : "Show Frequency Count"}
       </button>
     </div>
 
