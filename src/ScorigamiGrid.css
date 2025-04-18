@@ -14,13 +14,15 @@
 
 /* Container for the grid */
 .grid-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: auto;
     max-width: 100%;
-    overflow: visible;
-    margin: 0 auto;
+    display: flex;
+    justify-content: flex-start;
+    direction: ltr;
+    padding: 0;
+    margin: 0;
 }
 
 .grid-header {

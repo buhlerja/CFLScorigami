@@ -86,7 +86,7 @@ export default function ScorigamiGrid({
   const gridStyle = {
     display: "grid",
     gridTemplateColumns: `repeat(${size}, ${cellSize}px) ${cellSize * 1.5}px`, // Wider column for y-axis labels
-    fontSize: `${Math.max(6, cellSize * 0.35)}px` 
+    fontSize: `${Math.max(6, cellSize * 0.35)}px`
   };
 
   const cellStyle = {
@@ -101,16 +101,14 @@ export default function ScorigamiGrid({
   }
 
   return (
-    <div className="grid-container" style={{ 
-      overflow: 'auto', 
-      height: 'auto',
-      maxWidth: '100%',
-      padding: `${cellSize * 0.5}px` // Add padding around grid
-    }}>
+    <div className="grid-container">
       <div style={{ 
+        minWidth: 'max-content',
         display: "flex", 
         alignItems: "flex-start", // Changed to flex-start for better label alignment
-        gap: `${cellSize * 0.5}px` // Add consistent gap
+        justifyContent: "flex-start",
+        gap: `${cellSize * 0.5}px`, // Add consistent gap
+        padding: `${cellSize * 0.5}px`
       }}>
         
         {/* Grid with X-axis Label and grid itself */}
