@@ -43,7 +43,7 @@ export default function AdditionalInfoView() {
       <section className="info-section">
         <h2>Other</h2>
         <p>
-          Updates to this website are underway. Last updated: April 18, 2025
+          Updates to this website are underway. Last updated: April 18, 2025.
         </p>
       </section>
     </div>

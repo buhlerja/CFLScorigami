@@ -55,7 +55,7 @@ function groupGameDataByScore(gameData) {
 function getFrequencyData(gameData) {
   const frequencyData = {}
   gameData.forEach(row => {
-    const [winningTeam, losingTeam, winningScore, losingScore, homeTeam, date, week, year] = row;
+    const [winningTeam, losingTeam, winningScore, losingScore, homeTeam, date, week, year] = row; // UNUSED VARS. Comp. warning
 
     const key = `${winningScore}-${losingScore}`;
 
