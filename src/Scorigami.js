@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import ScoreView from "./ScoreView";
 import './ScorigamiGrid.css';  
 
-const dim_x = 88; // To account for starting from zero
 const dim_y = 55;
 const size = 88;
 
@@ -14,15 +13,37 @@ export default function ScorigamiGrid({
   show_numbers_freq = false,
   all_game_data = []
 }) {
-  /*useEffect(() => {
-    console.log('Existing scores (first 5):', existing_scores.slice(0, 5));
-    console.log('Grouped GAME DATA', all_game_data["30-20"]);
-    console.log('Score frequencies (sample):', Object.entries(score_frequencies).slice(0, 5));
-    console.log('Sample frequency check for (10,7):', score_frequencies["10-7"]);
-  }, [existing_scores, score_frequencies, all_game_data]);*/
+  
   
   // VARIABLE DECLARATIONS
   const [selectedScore, setSelectedScore] = useState(null);
+  const [cellSize, setCellSize] = useState(30); // Initial cell size in pixels
+  const [isGridLoaded, setIsGridLoaded] = useState(false);
+
+  // Handle window resize to adjust cell size
+  useEffect(() => {
+    const handleResize = () => {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate optimal cell size based on viewport dimensions
+      const newCellSize = Math.max(
+        15, // Minimum cell size
+        Math.min(
+          30, // Maximum cell size
+          Math.floor(Math.min(viewportWidth * 0.9, viewportHeight * 1.5) / size)
+        )
+      );
+    
+      setCellSize(newCellSize);
+      setIsGridLoaded(true);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const handleClick = (scoreKey) => {
     setSelectedScore(scoreKey); // like "30-20"
@@ -61,44 +82,74 @@ export default function ScorigamiGrid({
     return `rgb(${red}, ${green}, ${blue})`;
   };
 
+  // Dynamic styles based on cell size
+  const gridStyle = {
+    display: "grid",
+    gridTemplateColumns: `repeat(${size}, ${cellSize}px) ${cellSize * 1.5}px`, // Wider column for y-axis labels
+    fontSize: `${Math.max(6, cellSize * 0.35)}px` 
+  };
+
+  const cellStyle = {
+    width: `${cellSize}px`,
+    height: `${cellSize}px`,
+    lineHeight: `${cellSize}px`,
+    minWidth: `${cellSize}px` // Ensure cells don't shrink
+  };
+
+  if (!isGridLoaded) {
+    return <div>Loading...</div>; // Show a loading message or placeholder until grid size is set
+  }
+
   return (
-    <div className="grid-container">
-      {/* Wrap everything in a horizontal flex container */}
-      <div style={{ display: "flex", alignItems: "center" }}>
+    <div className="grid-container" style={{ 
+      overflow: 'auto', 
+      height: 'auto',
+      maxWidth: '100%',
+      padding: `${cellSize * 0.5}px` // Add padding around grid
+    }}>
+      <div style={{ 
+        display: "flex", 
+        alignItems: "flex-start", // Changed to flex-start for better label alignment
+        gap: `${cellSize * 0.5}px` // Add consistent gap
+      }}>
         
-  
         {/* Grid with X-axis Label and grid itself */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: "center",
+          gap: `${cellSize * 0.3}px` // Consistent gap
+        }}>
           
-          {/* X-Axis Label */}
-          <div style={{
-            textAlign: "center",
-            marginBottom: "4px",
-            fontWeight: "bold"
-          }}>
+          <div className="axis-label">
             Winning Score
           </div>
   
           {/* Header and body as stacked grids with shared columns */}
-          <div style={{ display: "grid", gridTemplateColumns: `repeat(${size}, minmax(10px, 1fr)) 40px` }}>
+          <div style={gridStyle}>
             {/* Grid Header (Top row labels) */}
             {[...Array(size)].map((_, i) => (
-              <div key={`header-${i}`} className="grid-cell">{i}</div>
+              <div 
+                key={`header-${i}`} 
+                className="grid-cell"
+                style={{ ...cellStyle, fontWeight: 'bold' }}
+              >
+                {i}
+              </div>
             ))}
             <div></div>
 
             {/* Grid Body (row by row) */}
-            {[...Array(size)].map((_, y) => (
+            {[...Array((dim_y + 1))].map((_, y) => (
               <React.Fragment key={`row-${y}`}>
                 {[...Array(size)].map((_, x) => {
                   if (x >= y && y <= dim_y){
-                    // Render the cell if X >= Y
                     if (!show_frequency) {
-                      // Show the o.g. scorigami grid
                       return (
                         <div
                           key={`cell-${x}-${y}`}
                           className={`grid-item ${isActive(x, y) ? "active" : ""}`}
+                          style={cellStyle}
                           title={`Score: (${x}, ${y})`}
                           onClick={() => handleClick(`${x}-${y}`)}
                         >
@@ -108,14 +159,13 @@ export default function ScorigamiGrid({
                         </div>
                       );                      
                     } else {
-                      // Show the frequency
                       const frequency = getFrequency(x, y);
                       const bgColor = getFrequencyColor(frequency);
                       return (
                         <div
                           key={`cell-${x}-${y}`}
                           className="grid-item"
-                          style={{ backgroundColor: bgColor }}
+                          style={{ ...cellStyle, backgroundColor: bgColor }}
                           title={`Score: (${x}, ${y})`}
                           onClick={() => handleClick(`${x}-${y}`)}
                         >
@@ -125,48 +175,49 @@ export default function ScorigamiGrid({
                         </div>
                       );
                     }
-              
                   } else {
-                    // Hide the cell if X < Y
                     return (
-                      <div key={`cell-${x}-${y}`} className="grid-item hidden"></div>
+                      <div 
+                        key={`cell-${x}-${y}`}
+                        className="grid-item hidden"
+                        style={cellStyle}
+                      ></div>
                     );
                   }
-                  
                 })}
                 {/* Y-Axis Row Label on the right side */}
                 {y <= dim_y ? (
-                  <div className="grid-cell text-center">{y}</div>
+                  <div 
+                    className="grid-cell text-center"
+                    style={{ 
+                      ...cellStyle, 
+                      fontWeight: 'bold',
+                      width: `${cellSize * 1.5}px` // Wider column for y-axis
+                    }}
+                  >
+                    {y}
+                  </div>
                 ) : (
                   <div></div>
                 )}
               </React.Fragment>
             ))}
             
-            {/* Conditionally render the ScoreView modal */}
             {selectedScore && (
               <ScoreView
                 scoreKey={selectedScore}
-                data={all_game_data[selectedScore]} // Make sure your data is structured like this
+                data={all_game_data[selectedScore]}
                 onClose={() => setSelectedScore(null)}
               />
             )}
           </div>
         </div>
-        {/* Y-Axis Label */}
-        <div style={{
-          writingMode: "vertical-rl",
-          textAlign: "center",
-          transform: "rotate(0deg)",
-          fontWeight: "bold",
-          marginRight: "8px",
-          whiteSpace: "nowrap",
-          marginTop: "calc(-25%)",   // <-- push it up!
-        }}>
-          Losing Score
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="axis-label y-axis-label">
+            Losing Score
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

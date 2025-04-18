@@ -1,0 +1,23 @@
+.additional-info-view {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    font-family: 'Segoe UI', sans-serif;
+    color: #2c3e50;
+  }
+  
+  .info-section {
+    margin-bottom: 2rem;
+  }
+  
+  .info-section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+  }
+  
+  .info-section p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  

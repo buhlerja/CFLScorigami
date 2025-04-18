@@ -20,6 +20,22 @@
     overflow-y: auto;
     position: relative;
     box-shadow: 0 0 10px rgba(0,0,0,0.25);
+    font-size: 1.05rem; /* Slightly larger than default (≈16.8px) */
+    line-height: 1.5;
+}
+
+.modal-content h2 {
+    font-size: 1.5rem; /* ≈24px */
+    margin-bottom: 1rem;
+}
+
+.modal-content li {
+    margin-bottom: 0.5rem;
+    font-size: 1rem; /* Default size ≈16px */
+}
+
+.modal-content p {
+    font-size: 1rem;
 }
 
 .close-button {

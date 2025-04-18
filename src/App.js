@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ScorigamiGrid from './Scorigami';
+import AdditionalInfoView from "./AdditionalInfoView";
 import './App.css';
 //import * as XLSX from 'xlsx'; // Import the XLSX library
 import axios from 'axios';
@@ -127,15 +128,15 @@ function App() {
     <div className="container">
       <h1 className="title">CFL Scorigami</h1>
 
-      {/* Toggle Button to Show Frequency */}
-      <button className="toggle-button" onClick={toggleFrequency}>
+    <div className="button-group">
+      <button className="styled-button" onClick={toggleFrequency}>
         {showFrequency ? "Hide Frequency Gradient" : "Show Frequency Gradient"}
       </button>
 
-      {/* Toggle Button to Show Frequency */}
-      <button className="toggle-button" onClick={toggleShowNumbersFreq}>
-        {showNumbersFreq ? "Hide Frequency Numbers" : "Show Frequency Numbers"}
+      <button className="styled-button" onClick={toggleShowNumbersFreq}>
+        {showNumbersFreq ? "Hide Frequency Numbers" : "Show Frequency Count"}
       </button>
+    </div>
 
 
       {loading ? (
@@ -151,7 +152,12 @@ function App() {
           /> {/* Pass the data to ScorigamiGrid */}
         </>
       )}
+
+      <div className="additional-info">
+        <AdditionalInfoView/>
+      </div>
     </div>
+
   );
 }
 
