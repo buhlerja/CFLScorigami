@@ -64,7 +64,7 @@ export default function ScorigamiGrid({
   };
   
   const isPrevToSelectedYrScorigami = (x, y) => {
-    if(selected_year == 2020) { // Cancelled season. Have to handle it by treating it as 2021 for past scorigami purposes
+    if(selected_year === 2020) { // Cancelled season. Have to handle it by treating it as 2021 for past scorigami purposes
       const adjusted_year = 2021
       const yearData = scorigami_by_year[adjusted_year];
       if (!yearData || !Array.isArray(yearData[0])) return false;
