@@ -11,7 +11,10 @@ export default function ScorigamiGrid({
   score_frequencies = [], 
   show_frequency = false,
   show_numbers_freq = false,
-  all_game_data = []
+  all_game_data = [],
+  scorigami_by_year = [],
+  selected_year = 2024,
+  show_scorigami_by_year = false
 }) {
   
   
@@ -53,6 +56,27 @@ export default function ScorigamiGrid({
     return existing_scores.some(([ex, ey]) => Number(ex) === Number(x) && Number(ey) === Number(y));
   };  
 
+  const isSelectedYrScorigami = (x, y) => {
+    const yearData = scorigami_by_year[selected_year];
+    if (!yearData || !Array.isArray(yearData[1])) return false;
+  
+    return yearData[1].some(([ex, ey]) => Number(ex) === Number(x) && Number(ey) === Number(y));
+  };
+  
+  const isPrevToSelectedYrScorigami = (x, y) => {
+    if(selected_year == 2020) { // Cancelled season. Have to handle it by treating it as 2021 for past scorigami purposes
+      const adjusted_year = 2021
+      const yearData = scorigami_by_year[adjusted_year];
+      if (!yearData || !Array.isArray(yearData[0])) return false;
+    
+      return yearData[0].some(([ex, ey]) => Number(ex) === Number(x) && Number(ey) === Number(y));
+    }
+    const yearData = scorigami_by_year[selected_year];
+    if (!yearData || !Array.isArray(yearData[0])) return false;
+  
+    return yearData[0].some(([ex, ey]) => Number(ex) === Number(x) && Number(ey) === Number(y));
+  };
+
   // Frequency getter with validation
   // Frequency getter for dictionary-based score_frequencies
   const getFrequency = (x, y) => {
@@ -71,7 +95,6 @@ export default function ScorigamiGrid({
 
     return freq;
   };
-
 
   // Enhanced color scaling
   const getFrequencyColor = (frequency) => {
@@ -142,11 +165,11 @@ export default function ScorigamiGrid({
               <React.Fragment key={`row-${y}`}>
                 {[...Array(size)].map((_, x) => {
                   if (x >= y && y <= dim_y){
-                    if (!show_frequency) {
-                      return (
+                    if(show_scorigami_by_year) {
+                      return(
                         <div
                           key={`cell-${x}-${y}`}
-                          className={`grid-item ${isActive(x, y) ? "active" : ""}`}
+                          className={`grid-item ${isSelectedYrScorigami(x, y) ? "selected-year-scorigami" : isPrevToSelectedYrScorigami(x, y) ? "prev-to-selected-year-scorigami" : ""}`}
                           style={cellStyle}
                           title={`Score: (${x}, ${y})`}
                           onClick={() => handleClick(`${x}-${y}`)}
@@ -155,8 +178,9 @@ export default function ScorigamiGrid({
                             <div className="grid-cell text-center">{getFrequency(x, y)}</div>
                           )}
                         </div>
-                      );                      
-                    } else {
+                      );
+                      
+                    } else if(show_frequency) {
                       const frequency = getFrequency(x, y);
                       const bgColor = getFrequencyColor(frequency);
                       return (
@@ -172,6 +196,20 @@ export default function ScorigamiGrid({
                           )}
                         </div>
                       );
+                    } else {
+                      return (
+                        <div
+                          key={`cell-${x}-${y}`}
+                          className={`grid-item ${isActive(x, y) ? "active" : ""}`}
+                          style={cellStyle}
+                          title={`Score: (${x}, ${y})`}
+                          onClick={() => handleClick(`${x}-${y}`)}
+                        >
+                          {show_numbers_freq && (
+                            <div className="grid-cell text-center">{getFrequency(x, y)}</div>
+                          )}
+                        </div>
+                      );           
                     }
                   } else {
                     return (

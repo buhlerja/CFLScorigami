@@ -55,12 +55,12 @@ function groupGameDataByScore(gameData) {
 function getFrequencyData(gameData) {
   const frequencyData = {}
   gameData.forEach(row => {
-    const [winningTeam, losingTeam, winningScore, losingScore, homeTeam, date, week, year] = row; // UNUSED VARS. Comp. warning
+    const [ , , winningScore, losingScore, , , , ] = row; // Only need winningScore and losingScore
 
     const key = `${winningScore}-${losingScore}`;
 
     if(!frequencyData[key]) {
-      frequencyData[key] = 0
+      frequencyData[key] = 0;
     }
 
     frequencyData[key] = frequencyData[key] + 1;
@@ -69,12 +69,37 @@ function getFrequencyData(gameData) {
   return frequencyData;
 }
 
+function getScorigamiByYear(gameData) {
+  const scorigamiByYear = {} // Key is YEAR. Value is [Prev Year Scorigamis, Year's Scorigamis]. Each element's format is (Winning Score, Losing Score)
+  const existingScores = []
+  gameData.forEach(row => {
+    const [ , , winningScore, losingScore, , , , year] = row;
+    const scoreTuple = [winningScore, losingScore];
+    const key = year;
+
+    if(!scorigamiByYear[key]) {
+      const prevScores = [...existingScores]; // shallow copy of scores up to this year
+      scorigamiByYear[key] = [prevScores, []];
+    }
+
+    if (!existingScores.some(([w, l]) => w === winningScore && l === losingScore)) {
+      scorigamiByYear[key][1].push(scoreTuple);
+      existingScores.push(scoreTuple);
+    }
+
+  });
+  return scorigamiByYear;
+}
+
 function App() {
   const [showFrequency, setShowFrequency] = useState(false); // State to toggle between grid and frequency view
-  const [showNumbersFreq, setShowNumbersFreq] = useState(false) // State to toggle between showing frequency numbers on boxes
-  const [scoreFrequencies, setScoreFrequencies] = useState([]) // Used to store score frequency data
+  const [showNumbersFreq, setShowNumbersFreq] = useState(false); // State to toggle between showing frequency numbers on boxes
+  const [scoreFrequencies, setScoreFrequencies] = useState([]); // Used to store score frequency data
   const [allGameData, setAllGameData] = useState([]); // Used to score the metadata around each individual score
   const [existingScores, setExistingScores] = useState([]);
+  const [scorigamiByYear, setScorigamiByYear] = useState([]); // Scorigami's achieved in a particular key = year
+  const [showScorigamiByYear, setShowScorigamiByYear] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(2024);
   const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
@@ -106,6 +131,8 @@ function App() {
         setAllGameData(groupedByScore);
         const groupedByFrequency = getFrequencyData(parsedData_forAllGameData);
         setScoreFrequencies(groupedByFrequency);
+        const groupedByScorigamiPerYear = getScorigamiByYear(parsedData_forAllGameData);
+        setScorigamiByYear(groupedByScorigamiPerYear);
         setLoading(false);
       } else {
         console.error("No data fetched.");
@@ -117,11 +144,27 @@ function App() {
   }, []);
 
   const toggleFrequency = () => {
-    setShowFrequency(!showFrequency);
+    const newShowFrequency = !showFrequency;
+    setShowFrequency(newShowFrequency);
+  
+    // If we're turning frequency ON and scorigami is ON, turn scorigami OFF
+    if (newShowFrequency && showScorigamiByYear) {
+      setShowScorigamiByYear(false);
+    }
   }
 
   const toggleShowNumbersFreq = () => {
-    setShowNumbersFreq(!showNumbersFreq)
+    setShowNumbersFreq(!showNumbersFreq);
+  }
+
+  const toggleScorigamiByYear = () => {
+    const newShowScorigamiByYear = !showScorigamiByYear;
+    setShowScorigamiByYear(newShowScorigamiByYear);
+
+    // If we're turning scorigami ON and frequency is ON, turn frequency OFF
+    if (newShowScorigamiByYear && showFrequency) {
+      setShowFrequency(false);
+    }
   }
 
   return (
@@ -136,8 +179,63 @@ function App() {
       <button className="styled-button" onClick={toggleShowNumbersFreq}>
         {showNumbersFreq ? "Hide Frequency Count" : "Show Frequency Count"}
       </button>
+
+      <button className="styled-button" onClick={toggleScorigamiByYear}>
+        {showScorigamiByYear ? "Hide Scorigami by Year" : "Show Scorigami by Year"}
+      </button>
+
     </div>
 
+    {/* Conditional rendering based on toggle */}
+    {showScorigamiByYear && (
+      <div className="scorigami-by-year-group">
+        <div style={{ padding: '1rem' }}>
+          <label htmlFor="yearRange">Select a Year: {selectedYear}</label>
+          <input
+            type="range"
+            id="yearRange"
+            min="1958"
+            max="2024"
+            step="1"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+            style={{ width: '100%' }}
+          />
+        </div>
+
+        <div>
+          <div style={{ marginBottom: '1rem' }}> {/* Add space between items */}
+            <p style={{ display: 'flex', alignItems: 'center' }}>
+              {/* Square color indicator for previous years */}
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: 'grey',
+                  marginRight: '10px',
+                }}
+              ></div>
+              = Scorigami from a year previous to {selectedYear}
+            </p>
+          </div>
+
+          <div>
+            <p style={{ display: 'flex', alignItems: 'center' }}>
+              {/* Square color indicator for the current year */}
+              <div
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  backgroundColor: '#DDA0DD',
+                  marginRight: '10px',
+                }}
+              ></div>
+              = Scorigami from the year {selectedYear}
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
 
       {loading ? (
         <p>Loading data...</p> // Show loading message while fetching
@@ -149,6 +247,9 @@ function App() {
           show_frequency={showFrequency} 
           show_numbers_freq={showNumbersFreq}
           all_game_data={allGameData}
+          scorigami_by_year={scorigamiByYear}
+          selected_year={selectedYear}
+          show_scorigami_by_year={showScorigamiByYear}
           /> {/* Pass the data to ScorigamiGrid */}
         </>
       )}
