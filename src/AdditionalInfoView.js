@@ -1,4 +1,5 @@
 import React from "react";
+import BuyMeACoffeeButton from "./BMCButton.js"
 import "./AdditionalInfoView.css";
 
 export default function AdditionalInfoView() {
@@ -42,9 +43,7 @@ export default function AdditionalInfoView() {
 
       <section className="info-section">
         <h2>Other</h2>
-        <p>
-          Updates to this website are underway. Last updated: April 19, 2025.
-        </p>
+        <BuyMeACoffeeButton />
       </section>
     </div>
   );
