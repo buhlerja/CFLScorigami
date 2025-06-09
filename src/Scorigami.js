@@ -13,7 +13,7 @@ export default function ScorigamiGrid({
   show_numbers_freq = false,
   all_game_data = [],
   scorigami_by_year = [],
-  selected_year = 2024,
+  selected_year = 2025,
   show_scorigami_by_year = false
 }) {
   

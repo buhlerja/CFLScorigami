@@ -15,7 +15,6 @@
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
-    "nth-check": ">=2.0.1",
     "http-proxy-middleware": ">=2.0.9",
     "@babel/runtime": ">=7.26.10",
     "postcss": ">=8.4.31"
@@ -48,9 +47,11 @@
   },
   "devDependencies": {
     "gh-pages": "^6.3.0",
-    "nth-check": ">=2.0.1",
     "http-proxy-middleware": ">=2.0.9",
     "@babel/runtime": ">=7.26.10",
     "postcss": ">=8.4.31"
+  },
+  "overrides": {
+    "nth-check": "^2.0.1"
   }
 }

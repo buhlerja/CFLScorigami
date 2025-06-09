@@ -99,7 +99,7 @@ function App() {
   const [existingScores, setExistingScores] = useState([]);
   const [scorigamiByYear, setScorigamiByYear] = useState([]); // Scorigami's achieved in a particular key = year
   const [showScorigamiByYear, setShowScorigamiByYear] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(2024);
+  const [selectedYear, setSelectedYear] = useState(2025);
   const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
@@ -195,7 +195,7 @@ function App() {
             type="range"
             id="yearRange"
             min="1958"
-            max="2024"
+            max="2025"
             step="1"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
