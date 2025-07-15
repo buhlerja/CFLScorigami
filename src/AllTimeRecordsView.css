@@ -8,8 +8,18 @@
   background-color: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-x: hidden; /* To keep scrollbars on list only */
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
+
+/* Mobile: Make container much wider */
+@media (max-width: 600px) {
+  .records-container {
+    width: 95%;         /* Fill most of the screen */
+    padding: 1rem;
+  }
+}
+
 
 .records-title {
   text-align: center;
