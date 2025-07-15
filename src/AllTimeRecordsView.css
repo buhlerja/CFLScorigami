@@ -35,17 +35,18 @@
 /* On screens narrower than 600px, stack cards vertically */
 @media (max-width: 600px) {
   .records-list {
-    align-items: center;
     flex-direction: column;
     overflow-x: hidden;      /* No horizontal scroll needed */
     padding-left: 0;
     padding-right: 0;
+    align-items: stretch;
   }
 
   .records-item {
-    max-width: 90%;
-    min-width: auto;
+    max-width: 100%;
+    min-width: unset;
     width: 100%;             /* Full width on mobile */
+    box-sizing: border-box;
   }
 }
 
