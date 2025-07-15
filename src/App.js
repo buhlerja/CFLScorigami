@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ScorigamiGrid from './Scorigami';
 import AdditionalInfoView from "./AdditionalInfoView";
+import AllTimeRecordsView from './AllTimeRecordsView';
+
 import './App.css';
 //import * as XLSX from 'xlsx'; // Import the XLSX library
 import axios from 'axios';
@@ -91,6 +93,39 @@ function getScorigamiByYear(gameData) {
   return scorigamiByYear;
 }
 
+function getAllTimeRecords(gameData) {
+  const allTimeRecords = {}; // Key is CITY NAME. Value is [Wins, Losses, Ties]
+  const cityNames = new Set(["Montreal", "Hamilton", "Ottawa", "Toronto", "Saskatchewan", "Winnipeg", "Calgary", "Edmonton", "BC"]);
+  gameData.forEach(row => {
+    const [winningTeam, losingTeam, winningScore, losingScore, , , , ,] = row;
+    // Filter out the city name from winning team and losing team
+    const winningCity = Array.from(cityNames).find(city => winningTeam.startsWith(city));
+    const losingCity = Array.from(cityNames).find(city => losingTeam.startsWith(city));
+    // Add to allTimeRecords
+    const tie = winningScore === losingScore;
+    if(winningCity) {
+      if (!allTimeRecords[winningCity]) allTimeRecords[winningCity] = [0, 0, 0];
+      if(tie) {
+        allTimeRecords[winningCity][2] += 1;
+      }
+      else {
+        allTimeRecords[winningCity][0] += 1;
+      }
+    }
+    if(losingCity) {
+      if (!allTimeRecords[losingCity]) allTimeRecords[losingCity] = [0, 0, 0];
+      if(tie) {
+        allTimeRecords[losingCity][2] += 1;
+      }
+      else {
+        allTimeRecords[losingCity][1] += 1;
+      }
+    }
+    
+  });
+  return allTimeRecords;
+}
+
 function App() {
   const [showFrequency, setShowFrequency] = useState(false); // State to toggle between grid and frequency view
   const [showNumbersFreq, setShowNumbersFreq] = useState(false); // State to toggle between showing frequency numbers on boxes
@@ -101,6 +136,7 @@ function App() {
   const [showScorigamiByYear, setShowScorigamiByYear] = useState(false);
   const [selectedYear, setSelectedYear] = useState(2025);
   const [loading, setLoading] = useState(true); // Loading state
+  const [allTimeRecords, setAllTimeRecords] = useState([]); // Contains all time win loss data for each team. Keys are city name. Values are [Wins, Losses, Ties]
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,9 +159,6 @@ function App() {
           ])
           .filter(row => row[0] && row[1] && row[2] && row[3]); // Filter rows with incomplete data
 
-        console.log('Parsed Data:', parsedData);
-        console.log('Grouped Data:', parsedData_forAllGameData);
-
         setExistingScores(parsedData);
         const groupedByScore = groupGameDataByScore(parsedData_forAllGameData);
         setAllGameData(groupedByScore);
@@ -133,6 +166,8 @@ function App() {
         setScoreFrequencies(groupedByFrequency);
         const groupedByScorigamiPerYear = getScorigamiByYear(parsedData_forAllGameData);
         setScorigamiByYear(groupedByScorigamiPerYear);
+        const groupedByAllTimeRecords = getAllTimeRecords(parsedData_forAllGameData);
+        setAllTimeRecords(groupedByAllTimeRecords);
         setLoading(false);
       } else {
         console.error("No data fetched.");
@@ -253,6 +288,11 @@ function App() {
           /> {/* Pass the data to ScorigamiGrid */}
         </>
       )}
+
+      <div className="all-time-records">
+        <AllTimeRecordsView all_time_records={allTimeRecords} />
+      </div>
+
 
       <div className="additional-info">
         <AdditionalInfoView/>

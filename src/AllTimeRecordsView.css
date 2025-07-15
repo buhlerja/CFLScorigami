@@ -1,0 +1,77 @@
+/* AllTimeRecordsView.css */
+
+.records-container {
+  width: 40%;
+  max-width: none;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden; /* To keep scrollbars on list only */
+}
+
+.records-title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.records-list {
+  list-style: none;
+  padding-left: 1rem;       /* Add left padding so first card isn't cut off */
+  padding-right: 0;         /* Keep right padding if you want */
+  margin: 0;
+
+  display: flex;
+  flex-wrap: nowrap;        /* No wrapping - keep in single row */
+  gap: 1.5rem;
+  overflow-x: auto;         /* Horizontal scroll if overflow */
+
+}
+
+.records-item {
+  flex: 0 0 auto;           /* Prevent shrinking, fixed width */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  min-width: 160px;
+  height: 220px;            /* Taller cards */
+
+  padding: 1rem 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.records-item strong {
+  display: block;
+  color: #2c3e50;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  
+  width: 16ch;          /* Limit width to about 16 characters */
+  white-space: normal;  /* Allow wrapping */
+  overflow-wrap: break-word;  /* Break long words if necessary */
+  word-break: break-word;      /* Break words to avoid overflow */
+  text-align: center;          /* Keep centered */
+}
+
+.record-stats > div {
+  margin-bottom: 0.5rem;
+}
+
+.label {
+  font-weight: 600;
+  margin-right: 0.25rem;
+  color: #555;
+}
