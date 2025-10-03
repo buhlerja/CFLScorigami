@@ -3,7 +3,7 @@ import ScoreView from "./ScoreView";
 import './ScorigamiGrid.css';  
 
 const dim_y = 55;
-const size = 88;
+const size = 71;
 
 // existing scores is in the format (winning score, losing score) as (x, y)
 export default function ScorigamiGrid({ 

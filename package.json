@@ -4,20 +4,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/runtime": ">=7.26.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.8.4",
     "css": "^3.0.0",
+    "http-proxy-middleware": ">=2.0.9",
     "papaparse": "^5.5.2",
+    "postcss": ">=8.4.31",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
-    "http-proxy-middleware": ">=2.0.9",
-    "@babel/runtime": ">=7.26.10",
-    "postcss": ">=8.4.31"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -46,9 +46,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/runtime": ">=7.26.10",
     "gh-pages": "^6.3.0",
     "http-proxy-middleware": ">=2.0.9",
-    "@babel/runtime": ">=7.26.10",
     "postcss": ">=8.4.31"
   },
   "overrides": {
