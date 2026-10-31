@@ -1,90 +1,94 @@
-/* Center the content within the main container */
+/* ScorigamiGrid.css */
+
+/* NOTE: App.js uses className="container", so this is probably unused.
+   If something else uses it, it must NOT set overflow, or it becomes a
+   second scroll container wrapped around .grid-container. */
 .main-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 100vh;
-    padding: 20px;
-    text-align: center;  /* Center the title text */
-    box-sizing: border-box;
-    width: 100%;
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-/* Container for the grid */
+/* The ONE horizontal scroller. The page itself should only scroll vertically. */
 .grid-container {
-    overflow-x: auto;
-    overflow-y: hidden;
-    height: auto;
-    max-width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    direction: ltr;
-    padding: 0;
-    margin: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-self: stretch;      /* ignore parent's align-items: center */
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: auto;
+  direction: ltr;
+  padding: 0;
+  margin: 0;
 }
 
 .grid-header {
-    margin-bottom: 10px;
-} 
-
-/* Grid cell styles - now more responsive */
-.grid-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    font-size: inherit; /* Now controlled by parent */
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  margin-bottom: 10px;
 }
 
-/* Base grid item styles - most sizing now handled inline */
+/* Text cells (axis numbers, frequency counts). Sizing is set inline. */
+.grid-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  font-size: inherit;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Base grid item: no transitions, no positioning, no pseudo-elements */
 .grid-item {
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    position: relative;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .grid-item.active {
-    background-color: green; /* Green background for active cells */
-    border: 1px solid #ccc; /* Optional: Add borders to grid cells */
+  background-color: green;
+  border: 1px solid #ccc;
 }
 
 .grid-item.selected-year-scorigami {
-    background-color: #DDA0DD; 
-    border: 1px solid #ccc; /* Optional: Add borders to grid cells */
+  background-color: #DDA0DD;
+  border: 1px solid #ccc;
 }
 
 .grid-item.prev-to-selected-year-scorigami {
-    background-color: grey; 
-    border: 1px solid #ccc; /* Optional: Add borders to grid cells */
-}
-
-.grid-item:hover {
-    background-color: #f5f5f5;
-    transform: scale(1.05);
-    z-index: 2;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: grey;
+  border: 1px solid #ccc;
 }
 
 .grid-item.hidden {
-    visibility: hidden;  /* Hides the cell but keeps the space in the grid */
-    border: none;
-}
-  
-
-.grid-item.active:hover {
-    background-color: darkgreen; /* Darker green for active cells on hover */
+  visibility: hidden;
+  border: none;
 }
 
+/* Hover only on devices that truly hover (not touch), color change only */
+@media (hover: hover) {
+  .grid-item:not(.hidden):not(.active):not(.selected-year-scorigami):not(.prev-to-selected-year-scorigami):hover {
+    background-color: #f5f5f5;
+  }
+
+  .grid-item.active:hover {
+    background-color: darkgreen;
+  }
+}
+
+/* Axis labels */
 .axis-label {
   font-size: 1.2rem;
   font-weight: 600;
@@ -95,63 +99,27 @@
 }
 
 .y-axis-label {
-    writing-mode: vertical-rl;
-    transform: rotate(0deg);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 25rem;
-  }
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 25rem;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .main-container {
-        padding: 10px;
-        justify-content: flex-start;
-    }
-    
-    .axis-label {
-        font-size: 1rem;
-    }
+  .main-container {
+    padding: 10px;
+  }
+
+  .axis-label {
+    font-size: 1rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .axis-label {
-        font-size: 0.9rem;
-    }
-}
-
-/* Animation for grid items */
-/*@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}*/
-
-/*.grid-item {
-    animation: fadeIn 0.3s ease-out forwards;
-}*/
-
-/* Tooltip styles for better information display */
-.grid-item::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-    z-index: 10;
-}
-
-.grid-item:hover::after {
-    opacity: 1;
-    transition-delay: 0.3s;
+  .axis-label {
+    font-size: 0.9rem;
+  }
 }

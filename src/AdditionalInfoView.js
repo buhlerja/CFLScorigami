@@ -1,5 +1,4 @@
 import React from "react";
-import BuyMeACoffeeButton from "./BMCButton.js"
 import "./AdditionalInfoView.css";
 
 export default function AdditionalInfoView() {
@@ -41,10 +40,6 @@ export default function AdditionalInfoView() {
         </p>
       </section>
 
-      <section className="info-section">
-        <h2>Other</h2>
-        <BuyMeACoffeeButton />
-      </section>
     </div>
   );
 }

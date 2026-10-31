@@ -1,33 +1,37 @@
 import React, { useState, useEffect } from "react";
-import ScorigamiGrid from './Scorigami';
+import ScorigamiGrid from './ScorigamiGrid';
 import AdditionalInfoView from "./AdditionalInfoView";
 import AllTimeRecordsView from './AllTimeRecordsView';
 
 import './App.css';
 //import * as XLSX from 'xlsx'; // Import the XLSX library
 import axios from 'axios';
+import Papa from 'papaparse';
 
-const SHEET_ID = '1l6-gLrur2ObZUD7DiEboNzhvFT-GMD2YECGIqoIndIk'
-const API_KEY = 'AIzaSyBW30DpZgLKVe37DgWsVK506-88z_GkOvc'
+const SHEET_CSV_URL =
+  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSDe3_JuaCQhj2aDe8EGSHIDy2DBLhF8cajxG2B6l6zXK5NL6vFEzaStYHS5GmdllYazVlShQXsfg-L/pub?output=csv';
 
 const fetchSheetData = async () => {
-  const range = 'Sheet1!A1:H6000';
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
-
   try {
-    const response = await axios.get(url);
-    
-    // Log the response to check the data structure
-    console.log('Response Data:', response.data);
-    
-    const data = response.data.values;
-    const data_filtered = data.slice(1);
-    if (data_filtered && data_filtered.length > 0) {
-      // Proceed with processing data
-      console.log(data_filtered);
+    const response = await axios.get(SHEET_CSV_URL, { responseType: 'text' });
+
+    // Parse CSV into an array of row arrays
+    const parsed = Papa.parse(response.data, {
+      skipEmptyLines: true,
+    });
+
+    if (parsed.errors.length > 0) {
+      console.warn('CSV parse warnings:', parsed.errors);
+    }
+
+    // Drop the header row, same as before
+    const data_filtered = parsed.data.slice(1);
+
+    if (data_filtered.length > 0) {
       return data_filtered;
     } else {
       console.error('Data is undefined or empty');
+      return [];
     }
   } catch (error) {
     console.error('Error fetching sheet data:', error);
@@ -134,13 +138,13 @@ function App() {
   const [existingScores, setExistingScores] = useState([]);
   const [scorigamiByYear, setScorigamiByYear] = useState([]); // Scorigami's achieved in a particular key = year
   const [showScorigamiByYear, setShowScorigamiByYear] = useState(false);
-  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedYear, setSelectedYear] = useState(2026);
   const [loading, setLoading] = useState(true); // Loading state
   const [allTimeRecords, setAllTimeRecords] = useState([]); // Contains all time win loss data for each team. Keys are city name. Values are [Wins, Losses, Ties]
 
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch data from the Google Sheets API
+      // Fetch data from the Google Sheet
       const data = await fetchSheetData();
       
       if (data && Array.isArray(data) && data.length > 0) {
@@ -230,7 +234,7 @@ function App() {
             type="range"
             id="yearRange"
             min="1958"
-            max="2025"
+            max="2026"
             step="1"
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
